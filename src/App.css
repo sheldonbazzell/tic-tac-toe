@@ -1,0 +1,15 @@
+.board {
+  height: 70vh;
+  width: 80%;
+  margin: 5% auto;
+}
+
+.board tr {
+  height: 50px;
+  border: 2px solid black; 
+}
+
+.board td {
+  width: 50px;
+  border: 2px solid black; 
+}
