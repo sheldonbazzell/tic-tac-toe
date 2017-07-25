@@ -1,19 +1,35 @@
 import React, {Component} from 'react';
 import {Table} from 'react-bootstrap';
 
+function Turn(props) {
+    return (
+        <div id="turn-container">
+            <span id="turn">Turn:</span>
+            {props.turn &&
+                <span className="player">Player One</span>
+            }
+            {!props.turn &&
+                <span className="player">Player Two</span>
+            }
+        </div>
+    )
+}
+
 class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            playerOneTurn:false,
-            board:[[1,1,1],[1,1,1],[1,1,1]]
+            playerOneTurn:true,
+            board:[[1,1,1],[1,1,1],[1,1,1]],
+            count: 0
         }
         this.handleClick = this.handleClick.bind(this);
     }
 
     updateCell(cell) {
-        if(!cell.innerHTML)
+        if (!cell.innerHTML || cell.innerHTML === '&nbsp;') {
             cell.innerHTML = this.state.playerOneTurn ? 'X' : 'O'        
+        }
     }
 
     handleClick(pos, e) {
@@ -21,94 +37,102 @@ class Board extends Component {
         let newState = this.state;
         newState['playerOneTurn'] = !this.state.playerOneTurn;
         newState['board'][x][y] = newState['playerOneTurn'] ? 2 : 3;
+        newState['count']++;
         this.setState(() => ({newState}), this.updateCell(e.target))
     }
 
     checkBoard() {
         let board = this.state.board;
-        let opt1 = board.filter(
-            (x, y) => y === 0
-        )
-        if (opt1[0] === opt1[1] && opt1[1] === opt1[2]) {
-            console.log(opt1)
-            return opt1[0]
-        }
-        let opt2 = board.filter(
-            (x, y) => y === 1
-        )
-        if (opt2[0] === opt2[1] && opt2[1] === opt2[2]) {
-            console.log(opt1)            
-            return opt2[0]
-        }
-        let opt3 = board.filter(
-            (x, y) => y === 2
-        )
-        if (opt3[0] === opt3[1] && opt3[1] === opt3[2]) {
-            console.log(opt3);
-            return opt3[0]
-        }
-        for (let i = 0; i < board.length; ++i) {
-            let stack = [board[i][0]];
-            if (stack[0] !== 1) {
-                for (let j = 1; j < board[i].length; ++j) {
-                    if (board[i][j] !== stack[i]){
-                        break;
-                    }
-                    stack.push(board[i][j]);
-                }
-                if (stack.length === 3) {
-                    return stack[0];
-                }
+        if (board[0][0] !== 1) {
+            if (board[0][0] === board[0][1] && board[0][1] === board[0][2]) {
+                console.log('here');
+                return board[0][0]
             }
         }
-        let topLeft = [board[0][0]];
-        if (topLeft[0] !== 1) {
-            for (let j = 1; j < board.length; ++j) {
-                if (board[j][j] === topLeft[0])
-                    topLeft.push(board[j][j]); 
-            }
-            if (topLeft.length === 3) {
-                console.log(topLeft);
-                return topLeft[0];
+        if (board[1][0] !== 1) {               
+            if (board[1][0] === board[1][1] && board[1][1] === board[1][2]) {
+                console.log('here');
+                return board[1][0]
             }
         }
-        let topRight = [board[0][2]];
-        if (topRight[0] !== 1) {
-            for (let k = 1; k >= 0; --k) {
-                if (board[k][k] === topRight[0])
-                    topRight.push(board[k][k]);
+        if (board[2][0] !== 1) {        
+            if (board[2][0] === board[2][1] && board[2][1] === board[2][2]) {
+                console.log('here');
+                return board[2][0]
             }
-            if (topRight.length === 3) {
-                return topRight[0];
+        }
+        if (board[0][0] !== 1) {
+            if (board[0][0] === board[1][0] && board[1][0] === board[2][0]) {
+                console.log('here');
+                return board[0][0]
             }
+        }
+        if (board[0][1] !== 1) {
+            if (board[0][1] === board[1][1] && board[1][1] === board[2][1]) {
+                console.log('here');
+                return board[0][0]
+            }
+        }
+        if (board[0][2] !== 1) {
+            if (board[0][2] === board[1][2] && board[1][2] === board[2][2]) {
+                console.log('here');
+                return board[0][2]
+            }
+        }
+        if (board[0][0] !== 1) {
+            if (board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+                console.log('here');
+                return board[0][0]
+            }
+        }
+        if (board[0][2] !== 1) {
+            if (board[0][2] === board[1][1] && board[1][1] === board[2][0]) {
+                console.log('here');
+                return board[0][2]
+            }
+        }
+        if (this.state.count === 9) {
+            return "Game Over";
         }
         return false;
-
     }
 
     render() {
         let x = this.checkBoard();
-        console.log(x);
         if (x) {
-            console.log(x);
-            alert(x, " wins!");
+            if (x === "Game Over") {
+                let restart = prompt("Game Over. Restart");
+                console.log(restart)
+                restart !== null ? window.location.reload() : window.close()
+            } else {
+                let msg = x === 2 ? "X wins!" : "Y wins!";
+                alert(msg);
+            }
         }
         return (
-            <Table className="board">
-                <tbody>
-                    {this.state['board'].map((x, y) => {
-                        return (
-                            <tr key={y}>
-                                {x.map((a,b) => {
-                                    return (
-                                        <td key={b} onClick={this.handleClick.bind(null, [y,b])}>{}</td>
-                                    )
-                                })}
-                            </tr>
-                        )
-                    })}
-                </tbody>
-            </Table>
+            <div>
+                <Table className="board">
+                    <tbody>
+                        {this.state['board'].map((x, y) => {
+                            return (
+                                <tr key={y}>
+                                    {x.map((a,b) => {
+                                        return (
+                                            <td
+                                                key={b}
+                                                onClick={this.handleClick.bind(null, [y,b])}
+                                                >
+                                                &nbsp;
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </Table>
+                <Turn turn={this.state.playerOneTurn} />
+            </div>
         )
     }
 }
