@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap';
 
 class NewGame extends React.Component {
     handleClick() {
-        window.location.reload();
+        window.locaton.reload();
     }
     render() {
         return (
